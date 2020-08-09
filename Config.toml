@@ -1,0 +1,21 @@
+[paths]
+classic = ""
+retail = ""
+
+[keybindings]
+update_addon = "u"
+update_all_addons = "U"
+remove_addon = "r"
+download_addon = "d"
+install_addon = "i"
+select_retail_version = "R"
+select_classic_version = "C"
+search_addon = "/"
+next_tab = "l"
+prev_tab = "h"
+next_table_item = "j"
+prev_table_item = "k"
+quit = "q"
+scroll_down_log = "J"
+scroll_up_log = "K"
+

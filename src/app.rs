@@ -9,7 +9,7 @@ use tui::widgets::{
 };
 use tui::Frame;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum Tab {
     Installed = 0,
     Search = 1,
@@ -94,8 +94,7 @@ impl StatefulTable {
     }
 
     pub fn get_selected(&self) -> Option<&TableItem> {
-        match self.state.selected() {
-            Some(i) => self.items.get(i),
+        match self.state.selected() { Some(i) => self.items.get(i),
             None => None,
         }
     }
@@ -452,89 +451,97 @@ impl App {
     }
 
     pub fn download(&mut self, save_path: String) {
-        let item = self.search_table.get_selected().unwrap();
-        let log_level;
-        let msg;
-        if let Err(err) =
-            CurseForgeAPI::download(&item.download_url, &save_path).and_then(
-                |_| AddonManager::add_to_db(&save_path, item.addon.clone()),
-            )
-        {
-            msg = format!("Couldn't install {}.\n{}\n", &item.cells[0], err);
-            log_level = LogLevel::Error;
-        } else {
-            msg = format!("{} successfully installed.\n", &item.cells[0]);
-            log_level = LogLevel::Info;
+        if self.tab_index == Tab::Search {
+            let item = self.search_table.get_selected().unwrap();
+            let log_level;
+            let msg;
+            if let Err(err) =
+                CurseForgeAPI::download(&item.download_url, &save_path).and_then(
+                    |_| AddonManager::add_to_db(&save_path, item.addon.clone()),
+                )
+            {
+                msg = format!("Couldn't install {}.\n{}\n", &item.cells[0], err);
+                log_level = LogLevel::Error;
+            } else {
+                msg = format!("{} successfully installed.\n", &item.cells[0]);
+                log_level = LogLevel::Info;
+            }
+            self.log(msg, log_level);
         }
-        self.log(msg, log_level);
     }
 
     pub fn update_all(&mut self, save_path: String) {
-        let mut msg = "No addons found.".to_string();
-        let mut log_level = LogLevel::Warning;
-        for item in self.updates.clone().iter() {
-            if let Err(err) = AddonManager::delete(&save_path, &item)
-                .and_then(|_| {
-                    CurseForgeAPI::download(&item.download_url, &save_path)
-                })
-                .and_then(|_| AddonManager::add_to_db(&save_path, item.clone()))
-            {
-                msg = format!(
-                    "Couldn't update {}.\n{}\n",
-                    item.name.clone(),
-                    err
-                );
-                log_level = LogLevel::Error;
-            } else {
-                msg = format!("{} successfully updated.\n", item.name.clone());
-                log_level = LogLevel::Info;
+        if self.tab_index == Tab::Installed {
+            let mut msg = "No addons found.".to_string();
+            let mut log_level = LogLevel::Warning;
+            for item in self.updates.clone().iter() {
+                if let Err(err) = AddonManager::delete(&save_path, &item)
+                    .and_then(|_| {
+                        CurseForgeAPI::download(&item.download_url, &save_path)
+                    })
+                    .and_then(|_| AddonManager::add_to_db(&save_path, item.clone()))
+                {
+                    msg = format!(
+                        "Couldn't update {}.\n{}\n",
+                        item.name.clone(),
+                        err
+                    );
+                    log_level = LogLevel::Error;
+                } else {
+                    msg = format!("{} successfully updated.\n", item.name.clone());
+                    log_level = LogLevel::Info;
+                }
             }
+            self.log(msg, log_level);
         }
-        self.log(msg, log_level);
     }
 
     pub fn update_addon(&mut self, save_path: String) {
-        let item = self.installed_table.get_selected().unwrap();
-        let name = &item.cells[1];
-        let msg;
-        let log_level;
-        if let Err(err) = AddonManager::delete(&save_path, &item.addon)
-            .and_then(|_| {
-                CurseForgeAPI::download(&item.download_url, &save_path)
-            })
-            .and_then(|_| {
-                AddonManager::add_to_db(&save_path, item.addon.clone())
-            })
-        {
-            msg = format!("Couldn't update {}.\n{}\n", name, err);
-            log_level = LogLevel::Error;
-        } else {
-            msg = format!("{} successfully updated.\n", name);
-            log_level = LogLevel::Info;
+        if self.tab_index == Tab::Installed {
+            let item = self.installed_table.get_selected().unwrap();
+            let name = &item.cells[1];
+            let msg;
+            let log_level;
+            if let Err(err) = AddonManager::delete(&save_path, &item.addon)
+                .and_then(|_| {
+                    CurseForgeAPI::download(&item.download_url, &save_path)
+                })
+                .and_then(|_| {
+                    AddonManager::add_to_db(&save_path, item.addon.clone())
+                })
+            {
+                msg = format!("Couldn't update {}.\n{}\n", name, err);
+                log_level = LogLevel::Error;
+            } else {
+                msg = format!("{} successfully updated.\n", name);
+                log_level = LogLevel::Info;
+            }
+            self.log(msg, log_level);
         }
-        self.log(msg, log_level);
     }
 
     pub fn remove_addon(&mut self) {
-        let path = match self.selected_version {
-            Version::Classic => &self.classic_path,
-            Version::Retail => &self.retail_path,
-        };
-        let item = self.installed_table.get_selected().unwrap();
-        let msg;
-        let log_level;
-        match AddonManager::delete(&path, &item.addon) {
-            Ok(_) => {
-                msg = format!("{} successfully deleted.\n", &item.cells[1]);
-                log_level = LogLevel::Info;
+        if self.tab_index == Tab::Installed {
+            let path = match self.selected_version {
+                Version::Classic => &self.classic_path,
+                Version::Retail => &self.retail_path,
+            };
+            let item = self.installed_table.get_selected().unwrap();
+            let msg;
+            let log_level;
+            match AddonManager::delete(&path, &item.addon) {
+                Ok(_) => {
+                    msg = format!("{} successfully deleted.\n", &item.cells[1]);
+                    log_level = LogLevel::Info;
+                }
+                Err(err) => {
+                    msg = format!("Couldn't delete {}.\n{}\n", &item.cells[1], err);
+                    log_level = LogLevel::Error;
+                }
             }
-            Err(err) => {
-                msg = format!("Couldn't delete {}.\n{}\n", &item.cells[1], err);
-                log_level = LogLevel::Error;
-            }
+            self.load_installed_addons();
+            self.log(msg, log_level);
         }
-        self.load_installed_addons();
-        self.log(msg, log_level);
     }
 
     fn centered_rect(&self, percent_x: u16, percent_y: u16, r: Rect) -> Rect {

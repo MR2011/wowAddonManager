@@ -7,7 +7,7 @@ This is an open source World of Warcraft addon managager for Linux. It supports 
 ## Screenshots
 
 [Installed View](./screenshots/installed.png)
-[Search View](./screenshots/seach.png)
+[Search View](./screenshots/search.png)
 
 ## Requirements
 

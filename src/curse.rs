@@ -1,5 +1,5 @@
 extern crate tempfile;
-use crate::addon_manager::{Addon};
+use crate::addon_manager::Addon;
 use crate::app::TableItem;
 use crate::app::Version;
 use std::collections::HashMap;
@@ -70,11 +70,8 @@ impl CurseForgeAPI {
                     })
                     .collect();
                 let addon = Addon {
-                    addon_id: json["id"]
-                        .as_str()
-                        .unwrap_or_default()
-                        .to_string(),
-                    file_id: file["id"].as_str().unwrap_or_default().to_string(),
+                    addon_id: json["id"].to_string(),
+                    file_id: file["id"].to_string(),
                     name: json["name"].as_str().unwrap_or_default().to_string(),
                     file_date: filedate.to_string(),
                     modules: modules,

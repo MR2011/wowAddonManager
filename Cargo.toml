@@ -9,7 +9,7 @@ readme = "README.md"
 homepage = "https://github.com/MR2011/wowAddonManager"
 repository = "https://github.com/MR2011/wowAddonManager"
 keywords = ["wow", "addon", "classic", "curse", "tui"]
-categories = ["command-line-utilities", "cli"]
+categories = ["command-line-utilities", "command-line-interface"]
 
 [dependencies]
 tui = "0.9.5"

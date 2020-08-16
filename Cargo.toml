@@ -1,8 +1,15 @@
 [package]
 name = "wowAddonManager"
-version = "0.1.0"
+version = "1.0.1"
 authors = ["Michael Reimsbach <mr201190@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "A TUI for managing WoW (retail and classic) addons.
+readme = "README.md"
+homepage = "https://github.com/MR2011/wowAddonManager"
+repository = "https://github.com/MR2011/wowAddonManager"
+keywords = ["wow", "addon", "classic", "curse", "tui", "world of warcraft"]
+categories = ["command-line-utilities", "cli"]
 
 [dependencies]
 tui = "0.9.5"

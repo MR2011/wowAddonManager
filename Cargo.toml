@@ -8,7 +8,7 @@ description = "A TUI for managing WoW (retail and classic) addons."
 readme = "README.md"
 homepage = "https://github.com/MR2011/wowAddonManager"
 repository = "https://github.com/MR2011/wowAddonManager"
-keywords = ["wow", "addon", "classic", "curse", "tui", "world of warcraft"]
+keywords = ["wow", "addon", "classic", "curse", "tui", "worldofwarcraft"]
 categories = ["command-line-utilities", "cli"]
 
 [dependencies]

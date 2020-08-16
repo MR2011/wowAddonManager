@@ -94,7 +94,8 @@ impl StatefulTable {
     }
 
     pub fn get_selected(&self) -> Option<&TableItem> {
-        match self.state.selected() { Some(i) => self.items.get(i),
+        match self.state.selected() {
+            Some(i) => self.items.get(i),
             None => None,
         }
     }
@@ -456,11 +457,13 @@ impl App {
             let log_level;
             let msg;
             if let Err(err) =
-                CurseForgeAPI::download(&item.download_url, &save_path).and_then(
-                    |_| AddonManager::add_to_db(&save_path, item.addon.clone()),
-                )
+                CurseForgeAPI::download(&item.download_url, &save_path)
+                    .and_then(|_| {
+                        AddonManager::add_to_db(&save_path, item.addon.clone())
+                    })
             {
-                msg = format!("Couldn't install {}.\n{}\n", &item.cells[0], err);
+                msg =
+                    format!("Couldn't install {}.\n{}\n", &item.cells[0], err);
                 log_level = LogLevel::Error;
             } else {
                 msg = format!("{} successfully installed.\n", &item.cells[0]);
@@ -479,7 +482,9 @@ impl App {
                     .and_then(|_| {
                         CurseForgeAPI::download(&item.download_url, &save_path)
                     })
-                    .and_then(|_| AddonManager::add_to_db(&save_path, item.clone()))
+                    .and_then(|_| {
+                        AddonManager::add_to_db(&save_path, item.clone())
+                    })
                 {
                     msg = format!(
                         "Couldn't update {}.\n{}\n",
@@ -488,7 +493,10 @@ impl App {
                     );
                     log_level = LogLevel::Error;
                 } else {
-                    msg = format!("{} successfully updated.\n", item.name.clone());
+                    msg = format!(
+                        "{} successfully updated.\n",
+                        item.name.clone()
+                    );
                     log_level = LogLevel::Info;
                 }
             }
@@ -499,6 +507,11 @@ impl App {
     pub fn update_addon(&mut self, save_path: String) {
         if self.tab_index == Tab::Installed {
             let item = self.installed_table.get_selected().unwrap();
+            let update = self
+                .updates
+                .iter()
+                .find(|&u| u.addon_id == item.addon.addon_id)
+                .unwrap();
             let name = &item.cells[1];
             let msg;
             let log_level;
@@ -507,7 +520,7 @@ impl App {
                     CurseForgeAPI::download(&item.download_url, &save_path)
                 })
                 .and_then(|_| {
-                    AddonManager::add_to_db(&save_path, item.addon.clone())
+                    AddonManager::add_to_db(&save_path, update.clone())
                 })
             {
                 msg = format!("Couldn't update {}.\n{}\n", name, err);
@@ -515,6 +528,7 @@ impl App {
             } else {
                 msg = format!("{} successfully updated.\n", name);
                 log_level = LogLevel::Info;
+                self.load_installed_addons();
             }
             self.log(msg, log_level);
         }
@@ -535,7 +549,10 @@ impl App {
                     log_level = LogLevel::Info;
                 }
                 Err(err) => {
-                    msg = format!("Couldn't delete {}.\n{}\n", &item.cells[1], err);
+                    msg = format!(
+                        "Couldn't delete {}.\n{}\n",
+                        &item.cells[1], err
+                    );
                     log_level = LogLevel::Error;
                 }
             }

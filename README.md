@@ -24,7 +24,7 @@ This project uses [Termion](https://gitlab.redox-os.org/redox-os/termion) for co
 
 ### Cargo
 
-Coming soon
+`cargo install wowAddonManager`
 
 ## Configuration
 

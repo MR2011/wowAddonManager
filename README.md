@@ -16,6 +16,11 @@ This project uses [Termion](https://gitlab.redox-os.org/redox-os/termion) for co
 
 ## Installation
 
+### Binary
+
+1. Download the latest [release](https://github.com/MR2011/wowAddonManager/releases)
+2. Run `./wowAddonManager`
+
 ### Source
 
 1. Make sure you have [Rust](https://rustup.rs/) installed 

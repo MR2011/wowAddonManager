@@ -56,7 +56,7 @@ impl Settings {
                 .unwrap_or("".to_string()),
         );
         let update_all_addons = Settings::parse_key(
-            s.get::<String>("keybindings.update_all_addon")
+            s.get::<String>("keybindings.update_all_addons")
                 .unwrap_or("".to_string()),
         );
         let remove_addon = Settings::parse_key(

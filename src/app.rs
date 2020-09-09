@@ -615,11 +615,13 @@ impl App {
     pub fn select_classic(&mut self) {
         self.selected_version = Version::Classic;
         self.log("Switched to Classic.\n".to_string(), LogLevel::Info);
+        self.refresh_view();
     }
 
     pub fn select_retail(&mut self) {
         self.selected_version = Version::Retail;
         self.log("Switched to Retail.\n".to_string(), LogLevel::Info);
+        self.refresh_view();
     }
 
     pub fn scroll_up_log(&mut self) {
@@ -665,6 +667,13 @@ impl App {
 
     pub fn log(&mut self, msg: String, log_level: LogLevel) {
         self.log_messages.push((msg, log_level));
+    }
+
+    pub fn refresh_view(&mut self) {
+        match self.tab_index {
+            Tab::Installed => self.load_installed_addons(),
+            Tab::Search => self.search(self.user_input.clone()),
+        };
     }
 
     pub fn get_save_path(&self) -> String {

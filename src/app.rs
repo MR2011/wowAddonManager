@@ -451,9 +451,10 @@ impl App {
         self.log(msg, log_level);
     }
 
-    pub fn download(&mut self, save_path: String) {
+    pub fn download(&mut self) {
         if self.tab_index == Tab::Search {
             let item = self.search_table.get_selected().unwrap();
+            let save_path = self.get_save_path();
             let log_level;
             let msg;
             if let Err(err) =
@@ -473,8 +474,9 @@ impl App {
         }
     }
 
-    pub fn update_all(&mut self, save_path: String) {
+    pub fn update_all(&mut self) {
         if self.tab_index == Tab::Installed {
+            let save_path = self.get_save_path();
             let mut msg = "No addons found.".to_string();
             let mut log_level = LogLevel::Warning;
             for item in self.updates.clone().iter() {
@@ -504,8 +506,9 @@ impl App {
         }
     }
 
-    pub fn update_addon(&mut self, save_path: String) {
+    pub fn update_addon(&mut self) {
         if self.tab_index == Tab::Installed {
+            let save_path = self.get_save_path();
             let item = self.installed_table.get_selected().unwrap();
             let update = self
                 .updates
@@ -662,5 +665,12 @@ impl App {
 
     pub fn log(&mut self, msg: String, log_level: LogLevel) {
         self.log_messages.push((msg, log_level));
+    }
+
+    pub fn get_save_path(&self) -> String {
+        match self.selected_version {
+            Version::Classic => self.classic_path.clone(),
+            Version::Retail => self.retail_path.clone(),
+        }
     }
 }

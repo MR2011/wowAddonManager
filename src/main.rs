@@ -86,7 +86,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                     // terminal.show_cursor()?;
                     // events.disable_exit_key();
                     } else if input == settings.key_bindings.download_addon {
-                        app.download(settings.paths.classic.clone());
+                        app.download();
                     } else if input == settings.key_bindings.remove_addon {
                         dialog_callback = Some(App::remove_addon);
                         app.add_dialog(
@@ -117,9 +117,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                     } else if input == settings.key_bindings.quit {
                         break;
                     } else if input == settings.key_bindings.update_all_addons {
-                        app.update_all(settings.paths.classic.clone());
+                        app.update_all();
                     } else if input == settings.key_bindings.update_addon {
-                        app.update_addon(settings.paths.classic.clone());
+                        app.update_addon();
                     }
                 }
                 Mode::Editing => match input {

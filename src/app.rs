@@ -477,9 +477,9 @@ impl App {
     pub fn update_all(&mut self) {
         if self.tab_index == Tab::Installed {
             let save_path = self.get_save_path();
-            let mut msg = "No addons found.".to_string();
-            let mut log_level = LogLevel::Warning;
             for item in self.updates.clone().iter() {
+                let msg;
+                let log_level;
                 if let Err(err) = AddonManager::delete(&save_path, &item)
                     .and_then(|_| {
                         CurseForgeAPI::download(&item.download_url, &save_path)
@@ -501,8 +501,8 @@ impl App {
                     );
                     log_level = LogLevel::Info;
                 }
+                self.log(msg, log_level);
             }
-            self.log(msg, log_level);
         }
     }
 

@@ -43,9 +43,18 @@ Before you run the program for the first time, you have to define the path to yo
 [paths]
 classic = "/path/to/wow/classic/interface/addons"
 retail = "/path/to/wow/retail/interface/addons"
+tbc = "/path/to/wow/retail/interface/addons"
 ```
 
-Default keybindings:
+### TBC Update
+
+Make sure you have:
+
+- set your Tbc path in your `Config.toml`
+- created an `.addons.json` file with the content `{"addons":[]}` in your Tbc addon folder
+- added a keybinding for the Tbc tab in your `Config.toml`
+
+## Default keybindings:
 
 ```
 [keybindings]
@@ -56,6 +65,7 @@ download_addon = "d"
 install_addon = "i"
 select_retail_version = "R"
 select_classic_version = "C"
+select_tbc_version = "T"
 search_addon = "/"
 next_tab = "l"
 prev_tab = "h"

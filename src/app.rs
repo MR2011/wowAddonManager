@@ -32,7 +32,8 @@ impl Tab {
 #[derive(Copy, Clone)]
 pub enum Version {
     Classic = 0,
-    Retail = 1,
+    Tbc = 1,
+    Retail = 2,
 }
 
 pub enum LogLevel {
@@ -132,12 +133,13 @@ pub struct App {
     log_messages: Vec<(String, LogLevel)>,
     classic_path: String,
     retail_path: String,
+    tbc_path: String,
     updates: Vec<Addon>,
     dialog: Option<Dialog>,
 }
 
 impl App {
-    pub fn new(classic_path: String, retail_path: String) -> App {
+    pub fn new(classic_path: String, retail_path: String, tbc_path: String) -> App {
         let mut app = App {
             mode: Mode::Normal,
             user_input: String::new(),
@@ -149,6 +151,7 @@ impl App {
             log_messages: Vec::new(),
             classic_path: classic_path,
             retail_path: retail_path,
+            tbc_path: tbc_path,
             updates: Vec::new(),
             dialog: None,
         };
@@ -202,7 +205,7 @@ impl App {
             .style(Theme::default())
             .highlight_style(Theme::active());
         frame.render_widget(tabs, tab_chunks[0]);
-        let version_index = vec!["Classic", "Retail"];
+        let version_index = vec!["Classic", "Tbc", "Retail"];
         let versions = Tabs::default()
             .block(Block::default().borders(Borders::ALL).title("Version"))
             .titles(&version_index)
@@ -248,6 +251,7 @@ impl App {
         let path = match self.selected_version {
             Version::Classic => &self.classic_path,
             Version::Retail => &self.retail_path,
+            Version::Tbc => &self.tbc_path,
         };
         let addons = match AddonManager::load_addon_db(&path) {
             Ok(a) => {
@@ -542,6 +546,7 @@ impl App {
             let path = match self.selected_version {
                 Version::Classic => &self.classic_path,
                 Version::Retail => &self.retail_path,
+                Version::Tbc => &self.tbc_path,
             };
             let item = self.installed_table.get_selected().unwrap();
             let msg;
@@ -624,6 +629,12 @@ impl App {
         self.refresh_view();
     }
 
+    pub fn select_tbc(&mut self) {
+        self.selected_version = Version::Tbc;
+        self.log("Switched to Tbc.\n".to_string(), LogLevel::Info);
+        self.refresh_view();
+    }
+
     pub fn scroll_up_log(&mut self) {
         if self.log_scroll > 0 {
             self.log_scroll -= 1;
@@ -680,6 +691,7 @@ impl App {
         match self.selected_version {
             Version::Classic => self.classic_path.clone(),
             Version::Retail => self.retail_path.clone(),
+            Version::Tbc => self.tbc_path.clone(),
         }
     }
 }

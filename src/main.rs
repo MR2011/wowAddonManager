@@ -39,6 +39,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut app = App::new(
         settings.paths.classic.clone(),
         settings.paths.retail.clone(),
+        settings.paths.tbc.clone(),
     );
 
     match AddonManager::init_addon_db(&settings.paths.classic) {
@@ -110,6 +111,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                         == settings.key_bindings.select_retail_version
                     {
                         app.select_retail();
+                    } else if input
+                        == settings.key_bindings.select_tbc_version
+                    {
+                        app.select_tbc();
                     } else if input == settings.key_bindings.scroll_down_log {
                         app.scroll_down_log();
                     } else if input == settings.key_bindings.scroll_up_log {

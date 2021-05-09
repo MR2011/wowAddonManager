@@ -1,6 +1,7 @@
 [paths]
 classic = ""
 retail = ""
+tbc = ""
 
 [keybindings]
 update_addon = "u"
@@ -10,6 +11,7 @@ download_addon = "d"
 install_addon = "i"
 select_retail_version = "R"
 select_classic_version = "C"
+select_tbc_version = "T"
 search_addon = "/"
 next_tab = "l"
 prev_tab = "h"

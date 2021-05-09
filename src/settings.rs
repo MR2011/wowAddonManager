@@ -7,6 +7,7 @@ use termion::event::Key;
 pub struct Paths {
     pub classic: String,
     pub retail: String,
+    pub tbc: String,
 }
 
 pub struct KeyBindings {
@@ -17,6 +18,7 @@ pub struct KeyBindings {
     pub install_addon: Key,
     pub select_retail_version: Key,
     pub select_classic_version: Key,
+    pub select_tbc_version: Key,
     pub search_addon: Key,
     pub next_tab: Key,
     pub prev_tab: Key,
@@ -50,6 +52,7 @@ impl Settings {
         let paths = Paths {
             classic: s.get::<String>("paths.classic").unwrap_or("".to_string()),
             retail: s.get::<String>("paths.retail").unwrap_or("".to_string()),
+            tbc: s.get::<String>("paths.tbc").unwrap_or("".to_string()),
         };
         let update_addon = Settings::parse_key(
             s.get::<String>("keybindings.update_addon")
@@ -77,6 +80,10 @@ impl Settings {
         );
         let select_classic_version = Settings::parse_key(
             s.get::<String>("keybindings.select_classic_version")
+                .unwrap_or("".to_string()),
+        );
+        let select_tbc_version = Settings::parse_key(
+            s.get::<String>("keybindings.select_tbc_version")
                 .unwrap_or("".to_string()),
         );
         let search_addon = Settings::parse_key(
@@ -119,6 +126,7 @@ impl Settings {
             install_addon: install_addon,
             select_retail_version: select_retail_version,
             select_classic_version: select_classic_version,
+            select_tbc_version: select_tbc_version,
             search_addon: search_addon,
             next_tab: next_tab,
             prev_tab: prev_tab,

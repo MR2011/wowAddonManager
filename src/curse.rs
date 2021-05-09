@@ -127,6 +127,7 @@ impl CurseForgeAPI {
         let game_version_flavor = match game_version {
             Version::Classic => "wow_classic",
             Version::Retail => "wow_retail",
+            Version::Tbc => "wow_burning_crusade",
         };
         let files = json["latestFiles"]
             .as_array()

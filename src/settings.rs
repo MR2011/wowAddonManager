@@ -1,8 +1,8 @@
 extern crate config;
 extern crate dirs;
 
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use std::{error::Error, fs, path::Path};
-use termion::event::Key;
 
 pub struct Paths {
     pub classic: String,
@@ -11,22 +11,22 @@ pub struct Paths {
 }
 
 pub struct KeyBindings {
-    pub update_addon: Key,
-    pub update_all_addons: Key,
-    pub remove_addon: Key,
-    pub download_addon: Key,
-    pub install_addon: Key,
-    pub select_retail_version: Key,
-    pub select_classic_version: Key,
-    pub select_tbc_version: Key,
-    pub search_addon: Key,
-    pub next_tab: Key,
-    pub prev_tab: Key,
-    pub next_table_item: Key,
-    pub prev_table_item: Key,
-    pub quit: Key,
-    pub scroll_down_log: Key,
-    pub scroll_up_log: Key,
+    pub update_addon: KeyEvent,
+    pub update_all_addons: KeyEvent,
+    pub remove_addon: KeyEvent,
+    pub download_addon: KeyEvent,
+    pub install_addon: KeyEvent,
+    pub select_retail_version: KeyEvent,
+    pub select_classic_version: KeyEvent,
+    pub select_tbc_version: KeyEvent,
+    pub search_addon: KeyEvent,
+    pub next_tab: KeyEvent,
+    pub prev_tab: KeyEvent,
+    pub next_table_item: KeyEvent,
+    pub prev_table_item: KeyEvent,
+    pub quit: KeyEvent,
+    pub scroll_down_log: KeyEvent,
+    pub scroll_up_log: KeyEvent,
 }
 
 const FILENAME: &str = "Config.toml";
@@ -164,7 +164,7 @@ impl Settings {
         }
     }
 
-    pub fn parse_key(key: String) -> Key {
+    pub fn parse_key(key: String) -> KeyEvent {
         fn get_single_char(string: &str) -> char {
             match string.chars().next() {
                 Some(c) => c,
@@ -173,24 +173,69 @@ impl Settings {
         }
 
         match key.len() {
-            1 => Key::Char(get_single_char(key.as_str())),
+            1 => KeyEvent {
+                code: KeyCode::Char(get_single_char(key.as_str())),
+                modifiers: match get_single_char(key.as_str()).is_uppercase() {
+                    true => KeyModifiers::SHIFT,
+                    false => KeyModifiers::NONE,
+                },
+            },
             _ => {
                 let tokens: Vec<&str> = key.split('-').collect();
 
                 match tokens[0].to_lowercase().as_str() {
-                    "ctrl" => Key::Ctrl(get_single_char(tokens[1])),
-                    "alt" => Key::Alt(get_single_char(tokens[1])),
-                    "left" => Key::Left,
-                    "right" => Key::Right,
-                    "up" => Key::Up,
-                    "down" => Key::Down,
-                    "backspace" => Key::Backspace,
-                    "del" => Key::Delete,
-                    "esc" => Key::Esc,
-                    "pageup" => Key::PageUp,
-                    "pagedown" => Key::PageDown,
-                    "space" => Key::Char(' '),
-                    _ => Key::Null,
+                    "ctrl" => KeyEvent {
+                        code: KeyCode::Char(get_single_char(tokens[1])),
+                        modifiers: KeyModifiers::CONTROL,
+                    },
+                    "alt" => KeyEvent {
+                        code: KeyCode::Char(get_single_char(tokens[1])),
+                        modifiers: KeyModifiers::ALT,
+                    },
+                    "left" => KeyEvent {
+                        code: KeyCode::Left,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "right" => KeyEvent {
+                        code: KeyCode::Right,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "up" => KeyEvent {
+                        code: KeyCode::Up,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "down" => KeyEvent {
+                        code: KeyCode::Down,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "backspace" => KeyEvent {
+                        code: KeyCode::Backspace,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "del" => KeyEvent {
+                        code: KeyCode::Delete,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "esc" => KeyEvent {
+                        code: KeyCode::Esc,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "pageup" => KeyEvent {
+                        code: KeyCode::PageUp,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "pagedown" => KeyEvent {
+                        code: KeyCode::PageDown,
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    "space" => KeyEvent {
+                        code: KeyCode::Char(' '),
+                        modifiers: KeyModifiers::NONE,
+                    },
+                    _ => KeyEvent {
+                        code: KeyCode::Null,
+                        modifiers: KeyModifiers::NONE,
+                    },
                 }
             }
         }

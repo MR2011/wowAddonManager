@@ -139,7 +139,11 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(classic_path: String, retail_path: String, tbc_path: String) -> App {
+    pub fn new(
+        classic_path: String,
+        retail_path: String,
+        tbc_path: String,
+    ) -> App {
         let mut app = App {
             mode: Mode::Normal,
             user_input: String::new(),

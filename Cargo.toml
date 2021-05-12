@@ -1,6 +1,6 @@
 [package]
 name = "wowAddonManager"
-version = "1.1.0"
+version = "2.0.0"
 authors = ["Michael Reimsbach <mr201190@gmail.com>"]
 edition = "2018"
 license = "MIT"
@@ -12,8 +12,8 @@ keywords = ["wow", "addon", "classic", "curse", "tui"]
 categories = ["command-line-utilities", "command-line-interface"]
 
 [dependencies]
-tui = "0.9.5"
-termion = "1.5.5"
+tui = { version = "0.9.5", default-features = false, features = ["crossterm"] }
+crossterm = "0.19"
 unicode-width = "0.1"
 reqwest = { version = "0.10", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }

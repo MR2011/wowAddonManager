@@ -4,8 +4,9 @@ use std::collections::HashMap;
 use tui::backend::Backend;
 use tui::layout::{Alignment, Constraint, Direction, Layout, Rect};
 use tui::style::{Color, Style};
+use tui::text::{Span, Spans, Text};
 use tui::widgets::{
-    Block, Borders, Clear, Paragraph, Row, Table, TableState, Tabs, Text,
+    Block, Borders, Clear, Paragraph, Row, Table, TableState, Tabs, Wrap,
 };
 use tui::Frame;
 
@@ -201,18 +202,24 @@ impl App {
                     .as_ref(),
             )
             .split(area);
-        let tab_index = vec!["Installed", "Search"];
-        let tabs = Tabs::default()
+        let tab_index = ["Installed", "Search"]
+            .iter()
+            .cloned()
+            .map(Spans::from)
+            .collect();
+        let tabs = Tabs::new(tab_index)
             .block(Block::default().borders(Borders::ALL).title("Tabs"))
-            .titles(&tab_index)
             .select(self.tab_index as usize)
             .style(Theme::default())
             .highlight_style(Theme::active());
         frame.render_widget(tabs, tab_chunks[0]);
-        let version_index = vec!["Classic", "Tbc", "Retail"];
-        let versions = Tabs::default()
+        let version_index = ["Classic", "Tbc", "Retail"]
+            .iter()
+            .cloned()
+            .map(Spans::from)
+            .collect();
+        let versions = Tabs::new(version_index)
             .block(Block::default().borders(Borders::ALL).title("Version"))
-            .titles(&version_index)
             .select(self.selected_version as usize)
             .style(Theme::default())
             .highlight_style(Theme::active());
@@ -223,15 +230,23 @@ impl App {
     where
         B: Backend,
     {
-        let header = ["Status", "Name", "WoW", "Installed", "Available"];
         let rows = self
             .installed_table
             .items
             .iter()
-            .map(|i| Row::StyledData(i.cells.iter(), Theme::default()));
-        let table = Table::new(header.iter(), rows)
+            .map(|i| Row::new(i.cells.clone()).style(Theme::default()));
+        let table = Table::new(rows)
+            .header(
+                Row::new(vec![
+                    "Status",
+                    "Name",
+                    "WoW",
+                    "Installed",
+                    "Available",
+                ])
+                .style(Theme::active()),
+            )
             .block(Block::default().title("Addons").borders(Borders::ALL))
-            .header_style(Theme::active())
             .widths(&[
                 Constraint::Percentage(15),
                 Constraint::Percentage(35),
@@ -337,8 +352,8 @@ impl App {
                     .as_ref(),
             )
             .split(area);
-        let text = [Text::raw(&self.user_input)];
-        let input = Paragraph::new(text.iter()).block(
+        let text = Span::raw(&self.user_input);
+        let input = Paragraph::new(text).block(
             Block::default()
                 .borders(Borders::ALL)
                 .border_style(match self.mode {
@@ -348,15 +363,17 @@ impl App {
                 .title("Search"),
         );
         frame.render_widget(input, chunks[0]);
-        let header = ["Name", "Game Version", "Date", "Downloads"];
         let rows = self
             .search_table
             .items
             .iter()
-            .map(|i| Row::StyledData(i.cells.iter(), Theme::default()));
-        let table = Table::new(header.iter(), rows)
+            .map(|i| Row::new(i.cells.clone()).style(Theme::default()));
+        let table = Table::new(rows)
             .block(Block::default().title("Addons").borders(Borders::ALL))
-            .header_style(Theme::active())
+            .header(
+                Row::new(vec!["Name", "Game Version", "Date", "Downloads"])
+                    .style(Theme::active()),
+            )
             .widths(&[
                 Constraint::Percentage(50),
                 Constraint::Percentage(15),
@@ -397,15 +414,15 @@ impl App {
                         prefix = "[Error]";
                     }
                 };
-                Text::styled(format!("{} {}", prefix, msg), style)
+                Spans::from(Span::styled(format!("{} {}", prefix, msg), style))
             })
-            .collect::<Vec<Text>>();
+            .collect::<Vec<Spans>>();
         text.reverse();
-        let paragraph = Paragraph::new(text.iter())
+        let paragraph = Paragraph::new(text)
             .block(Block::default().title("Log").borders(Borders::ALL))
             .alignment(Alignment::Left)
-            .wrap(true)
-            .scroll(self.log_scroll);
+            .wrap(Wrap { trim: true })
+            .scroll((0, self.log_scroll));
         frame.render_widget(paragraph, area);
     }
 
@@ -413,12 +430,11 @@ impl App {
     where
         B: Backend,
     {
-        let mut text =
-            vec![Text::raw(self.dialog.as_ref().unwrap().text.clone())];
+        let mut text = Text::raw(self.dialog.as_ref().unwrap().text.clone());
         if self.dialog.as_ref().unwrap().confirmation {
-            text.push(Text::raw("\n(Y)es/(N)o"));
+            text.extend(Text::raw("\n(Y)es/(N)o"));
         }
-        let paragraph = Paragraph::new(text.iter())
+        let paragraph = Paragraph::new(text)
             .block(Block::default().borders(Borders::ALL).title("Warning"))
             .alignment(Alignment::Center);
         let area = self.centered_rect(50, 10, frame.size());

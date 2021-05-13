@@ -12,7 +12,7 @@ keywords = ["wow", "addon", "classic", "curse", "tui"]
 categories = ["command-line-utilities", "command-line-interface"]
 
 [dependencies]
-tui = { version = "0.9.5", default-features = false, features = ["crossterm"] }
+tui = { version = "0.15", default-features = false, features = ["crossterm"] }
 crossterm = "0.19"
 unicode-width = "0.1"
 reqwest = { version = "0.10", features = ["json"] }
